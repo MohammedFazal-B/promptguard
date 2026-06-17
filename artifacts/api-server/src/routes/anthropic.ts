@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { conversations as conversationsTable, messages as messagesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { ai } from "../lib/gemini";
+import { ai, withRetry } from "../lib/gemini";
 
 const router = Router();
 
@@ -77,14 +77,16 @@ router.post("/anthropic/conversations/:id/messages", async (req, res): Promise<v
 
   let fullResponse = "";
 
-  const stream = await ai.models.generateContentStream({
-    model: "gemini-2.5-flash",
-    contents: allMsgs.map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    })),
-    config: { maxOutputTokens: 8192 },
-  });
+  const stream = await withRetry(() =>
+    ai.models.generateContentStream({
+      model: "gemini-2.5-flash",
+      contents: allMsgs.map((m) => ({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      })),
+      config: { maxOutputTokens: 8192 },
+    })
+  );
 
   for await (const chunk of stream) {
     const text = chunk.text;

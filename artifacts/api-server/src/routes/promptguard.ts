@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ai } from "../lib/gemini";
+import { ai, withRetry } from "../lib/gemini";
 import {
   inputSanitizer,
   delimiterEnforcer,
@@ -34,14 +34,16 @@ const ATTACK_SYSTEM_PROMPTS: Record<string, string> = {
 };
 
 async function generateContent(systemPrompt: string, userMessage: string): Promise<string> {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: [{ role: "user", parts: [{ text: userMessage }] }],
-    config: {
-      systemInstruction: systemPrompt,
-      maxOutputTokens: 8192,
-    },
-  });
+  const response = await withRetry(() =>
+    ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [{ role: "user", parts: [{ text: userMessage }] }],
+      config: {
+        systemInstruction: systemPrompt,
+        maxOutputTokens: 8192,
+      },
+    })
+  );
   return response.text ?? "";
 }
 
@@ -120,6 +122,7 @@ router.post("/promptguard/test-defense", async (req, res) => {
 
     const systemPrompt = ATTACK_SYSTEM_PROMPTS[attackType] ?? VULNERABLE_SYSTEM_PROMPT;
     const undefendedText = await generateContent(systemPrompt, payload);
+    await new Promise((r) => setTimeout(r, 1500));
 
     let processedPayload = payload;
     const triggeredDefenses: string[] = [];
@@ -263,14 +266,16 @@ router.post("/promptguard/chat", async (req, res) => {
       { role: "user" as const, parts: [{ text: message }] },
     ];
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents,
-      config: {
-        systemInstruction: systemPrompt,
-        maxOutputTokens: 8192,
-      },
-    });
+    const response = await withRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents,
+        config: {
+          systemInstruction: systemPrompt,
+          maxOutputTokens: 8192,
+        },
+      })
+    );
 
     const responseText = response.text ?? "";
 
