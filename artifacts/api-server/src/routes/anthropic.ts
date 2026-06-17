@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { conversations as conversationsTable, messages as messagesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { anthropic } from "../lib/anthropic";
+import { ai } from "../lib/gemini";
 
 const router = Router();
 
@@ -77,16 +77,20 @@ router.post("/anthropic/conversations/:id/messages", async (req, res): Promise<v
 
   let fullResponse = "";
 
-  const stream = anthropic.messages.stream({
-    model: "claude-sonnet-4-6",
-    max_tokens: 8192,
-    messages: allMsgs.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+  const stream = await ai.models.generateContentStream({
+    model: "gemini-2.5-flash",
+    contents: allMsgs.map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    })),
+    config: { maxOutputTokens: 8192 },
   });
 
-  for await (const event of stream) {
-    if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-      fullResponse += event.delta.text;
-      res.write(`data: ${JSON.stringify({ content: event.delta.text })}\n\n`);
+  for await (const chunk of stream) {
+    const text = chunk.text;
+    if (text) {
+      fullResponse += text;
+      res.write(`data: ${JSON.stringify({ content: text })}\n\n`);
     }
   }
 
