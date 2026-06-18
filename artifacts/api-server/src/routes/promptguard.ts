@@ -35,16 +35,16 @@ const ATTACK_SYSTEM_PROMPTS: Record<string, string> = {
 
 async function generateContent(systemPrompt: string, userMessage: string): Promise<string> {
   const response = await withRetry(() =>
-    ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [{ role: "user", parts: [{ text: userMessage }] }],
-      config: {
-        systemInstruction: systemPrompt,
-        maxOutputTokens: 8192,
-      },
+    ai.chat.completions.create({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage }
+      ],
+      max_tokens: 8192,
     })
   );
-  return response.text ?? "";
+  return response.choices[0]?.message?.content ?? "";
 }
 
 router.post("/promptguard/simulate-attack", async (req, res) => {
@@ -258,26 +258,25 @@ router.post("/promptguard/chat", async (req, res) => {
 
     const systemPrompt = mode === "hardened" ? HARDENED_SYSTEM_PROMPT : VULNERABLE_SYSTEM_PROMPT;
 
-    const contents = [
+    const messages: any[] = [
+      { role: "system", content: systemPrompt },
       ...history.map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content,
       })),
-      { role: "user" as const, parts: [{ text: message }] },
+      { role: "user", content: message },
     ];
 
     const response = await withRetry(() =>
-      ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents,
-        config: {
-          systemInstruction: systemPrompt,
-          maxOutputTokens: 8192,
-        },
-      })
+      ai.chat.completions.create({
+        model: "google/gemini-2.5-flash",
+        messages,
+        max_tokens: 8192,
+      }),
+      0 // Fail fast to not hang the UI
     );
 
-    const responseText = response.text ?? "";
+    const responseText = response.choices[0]?.message?.content ?? "";
 
     auditLogger({
       action: `chat:${mode}`,

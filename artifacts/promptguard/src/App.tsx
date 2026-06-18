@@ -26,7 +26,7 @@ function MainDashboard() {
           <div className="flex items-center gap-3">
             <Shield className="w-8 h-8 text-primary" />
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-white leading-none">PromptGuard</h1>
+              <h1 className="text-xl font-bold tracking-tight text-white leading-none">Vanguard</h1>
               <p className="text-xs text-muted-foreground font-mono mt-1">AI Prompt Injection Security Lab</p>
             </div>
           </div>
@@ -41,24 +41,24 @@ function MainDashboard() {
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-8">
-          <TabsList className="bg-secondary/50 border border-border p-1 overflow-x-auto flex w-full justify-start md:justify-center rounded-lg">
-            <TabsTrigger value="home" className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-primary">
-              <Shield className="w-4 h-4" /> Home
+          <TabsList className="flex flex-wrap w-full justify-center gap-2 bg-secondary/30 border border-border/50 rounded-xl p-3 h-auto">
+            <TabsTrigger value="home" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-primary/15 data-[state=active]:text-primary transition-colors duration-200">
+              <Shield className="w-4 h-4" /> Headquarters
             </TabsTrigger>
-            <TabsTrigger value="simulator" className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-destructive">
-              <ShieldAlert className="w-4 h-4" /> Attack Simulator
+            <TabsTrigger value="simulator" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-destructive/15 data-[state=active]:text-destructive transition-colors duration-200">
+              <ShieldAlert className="w-4 h-4" /> Threat Simulation
             </TabsTrigger>
-            <TabsTrigger value="defense" className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-success">
-              <ShieldCheck className="w-4 h-4" /> Defense Lab
+            <TabsTrigger value="defense" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-success/15 data-[state=active]:text-success transition-colors duration-200">
+              <ShieldCheck className="w-4 h-4" /> Security Sandbox
             </TabsTrigger>
-            <TabsTrigger value="redteam" className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-warning">
-              <TerminalSquare className="w-4 h-4" /> Live Red-Team
+            <TabsTrigger value="redteam" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-warning/15 data-[state=active]:text-warning transition-colors duration-200">
+              <TerminalSquare className="w-4 h-4" /> Active Breach
             </TabsTrigger>
-            <TabsTrigger value="cases" className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-info">
-              <BookOpen className="w-4 h-4" /> Case Studies
+            <TabsTrigger value="cases" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-info/15 data-[state=active]:text-info transition-colors duration-200">
+              <BookOpen className="w-4 h-4" /> Incident Logs
             </TabsTrigger>
-            <TabsTrigger value="docs" className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-foreground">
-              <FileText className="w-4 h-4" /> Documentation
+            <TabsTrigger value="docs" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-muted data-[state=active]:text-foreground transition-colors duration-200">
+              <FileText className="w-4 h-4" /> Intelligence
             </TabsTrigger>
           </TabsList>
 

@@ -29,8 +29,8 @@ if (!basePath) {
 export default defineConfig({
   base: basePath,
   plugins: [
-    react(),
     tailwindcss(),
+    react(),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
@@ -65,6 +65,12 @@ export default defineConfig({
     allowedHosts: true,
     fs: {
       strict: true,
+    },
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
     },
   },
   preview: {

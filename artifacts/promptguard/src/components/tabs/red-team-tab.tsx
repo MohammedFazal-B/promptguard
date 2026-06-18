@@ -44,6 +44,9 @@ export default function RedTeamTab() {
     }, {
       onSuccess: (data) => {
         setMessages([...newHistory, { role: "assistant", content: data.response }]);
+      },
+      onError: () => {
+        setMessages([...newHistory, { role: "assistant", content: "⚠️ Agent failed to respond due to API rate limits. Please wait a moment and try again." }]);
       }
     });
 
@@ -137,7 +140,16 @@ export default function RedTeamTab() {
                     ? 'bg-primary/10 border-primary/20 text-white rounded-tr-none' 
                     : 'bg-secondary border-border text-white/90 rounded-tl-none'
                 }`}>
-                  {msg.content}
+                  {msg.role === 'assistant' || msg.role === 'system' ? 
+                    msg.content
+                      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+                      .replace(/\*(.*?)\*/g, '$1')     // Remove italic
+                      .replace(/__(.*?)__/g, '$1')     // Remove bold
+                      .replace(/_(.*?)_/g, '$1')       // Remove italic
+                      .replace(/^#+\s*(.*?)$/gm, '$1') // Remove headers
+                      .replace(/`(.*?)`/g, '$1')       // Remove inline code
+                      .replace(/^\s*[\*\-]\s/gm, '• ') // Replace list asterisks with bullets
+                    : msg.content}
                 </div>
               </motion.div>
             ))}

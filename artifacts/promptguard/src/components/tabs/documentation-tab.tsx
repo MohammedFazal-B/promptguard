@@ -18,7 +18,7 @@ export default function DocumentationTab() {
       <div className="prose prose-invert prose-pre:bg-secondary prose-pre:border prose-pre:border-border max-w-none">
         <h3>Project Overview</h3>
         <p>
-          PromptGuard is an open-source research platform designed to help security engineers, AI researchers, and developers understand, simulate, and defend against prompt injection vulnerabilities in Large Language Models (LLMs).
+          Vanguard is an open-source research platform designed to help security engineers, AI researchers, and developers understand, simulate, and defend against prompt injection vulnerabilities in Large Language Models (LLMs).
         </p>
 
         <h3>Architecture</h3>
@@ -81,8 +81,8 @@ export default function DocumentationTab() {
         <h3 className="flex items-center gap-2 mt-8">
           <Terminal className="w-5 h-5" /> Local Installation
         </h3>
-        <pre><code>{`git clone https://github.com/promptguard/promptguard
-cd promptguard
+        <pre><code>{`git clone https://github.com/vanguard/vanguard
+cd vanguard
 npm install
 cp .env.example .env
 # Edit .env and add your ANTHROPIC_API_KEY
@@ -92,14 +92,14 @@ npm run dev`}</code></pre>
           <Code className="w-5 h-5" /> Contributing
         </h3>
         <p>
-          We welcome contributions from the security research community. Please read our <a href="#" className="text-info hover:text-info/80">Contributing Guidelines</a> before submitting a Pull Request. For responsible disclosure of new prompt injection vectors, please contact security@promptguard.dev.
+          We welcome contributions from the security research community. Please read our <a href="#" className="text-info hover:text-info/80">Contributing Guidelines</a> before submitting a Pull Request. For responsible disclosure of new prompt injection vectors, please contact security@vanguard.dev.
         </p>
 
         <hr className="border-border my-8" />
         
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© 2026 PromptGuard. Released under the MIT License.</p>
-          <a href="https://github.com/promptguard/promptguard" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-white hover:text-info transition-colors">
+          <p>© 2026 Vanguard. Released under the MIT License.</p>
+          <a href="https://github.com/vanguard/vanguard" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-white hover:text-info transition-colors">
             <Github className="w-4 h-4" /> Star on GitHub
           </a>
         </div>

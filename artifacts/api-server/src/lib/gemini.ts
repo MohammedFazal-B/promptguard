@@ -1,22 +1,27 @@
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 
 if (!process.env.GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY must be set.");
+  throw new Error("OPENROUTER_API_KEY or GEMINI_API_KEY must be set.");
 }
 
-export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+export const ai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 function isRetryableError(err: unknown): boolean {
   if (err && typeof err === "object" && "status" in err) {
     const status = (err as { status: number }).status;
-    return status === 429 || status === 503 || status === 500;
+    return status === 429 || status === 503 || status === 500 || status === 502;
   }
   if (err instanceof Error) {
     return (
       err.message.includes("429") ||
       err.message.includes("503") ||
+      err.message.includes("502") ||
       err.message.includes("UNAVAILABLE") ||
-      err.message.includes("RESOURCE_EXHAUSTED")
+      err.message.includes("rate limit") ||
+      err.message.includes("timeout")
     );
   }
   return false;
@@ -30,7 +35,6 @@ function parseRetryDelayMs(err: unknown, fallbackMs: number): number {
         : typeof err === "object" && err !== null && "message" in err
           ? String((err as { message: unknown }).message)
           : "";
-    // Gemini includes "Please retry in Xs" in the error message
     const match = msg.match(/retry in ([\d.]+)s/i);
     if (match) return Math.ceil(parseFloat(match[1]) * 1000) + 500;
   } catch {
@@ -42,7 +46,7 @@ function parseRetryDelayMs(err: unknown, fallbackMs: number): number {
 export async function withRetry<T>(
   fn: () => Promise<T>,
   maxRetries = 4,
-  baseDelayMs = 5000,
+  baseDelayMs = 2000,
 ): Promise<T> {
   let attempt = 0;
   while (true) {

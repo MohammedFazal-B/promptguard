@@ -78,18 +78,22 @@ router.post("/anthropic/conversations/:id/messages", async (req, res): Promise<v
   let fullResponse = "";
 
   const stream = await withRetry(() =>
-    ai.models.generateContentStream({
-      model: "gemini-2.5-flash",
-      contents: allMsgs.map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      })),
-      config: { maxOutputTokens: 8192 },
+    ai.chat.completions.create({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: "You are a helpful AI assistant. You must respond in plain clear text only. Do not use Markdown formatting, bolding, italics, or code blocks." },
+        ...allMsgs.map((m) => ({
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: m.content,
+        }))
+      ],
+      max_tokens: 8192,
+      stream: true,
     })
   );
 
   for await (const chunk of stream) {
-    const text = chunk.text;
+    const text = chunk.choices[0]?.delta?.content || "";
     if (text) {
       fullResponse += text;
       res.write(`data: ${JSON.stringify({ content: text })}\n\n`);
