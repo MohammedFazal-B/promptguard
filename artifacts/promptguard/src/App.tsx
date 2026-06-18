@@ -11,7 +11,7 @@ import AttackSimulatorTab from "@/components/tabs/attack-simulator-tab";
 import DefenseLabTab from "@/components/tabs/defense-lab-tab";
 import RedTeamTab from "@/components/tabs/red-team-tab";
 import CaseStudiesTab from "@/components/tabs/case-studies-tab";
-import DocumentationTab from "@/components/tabs/documentation-tab";
+
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -57,9 +57,7 @@ function MainDashboard() {
             <TabsTrigger value="cases" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-info/15 data-[state=active]:text-info transition-colors duration-200">
               <BookOpen className="w-4 h-4" /> Incident Logs
             </TabsTrigger>
-            <TabsTrigger value="docs" className="flex items-center gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-muted data-[state=active]:text-foreground transition-colors duration-200">
-              <FileText className="w-4 h-4" /> Intelligence
-            </TabsTrigger>
+
           </TabsList>
 
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -78,9 +76,7 @@ function MainDashboard() {
             <TabsContent value="cases" className="m-0 focus-visible:outline-none">
               <CaseStudiesTab />
             </TabsContent>
-            <TabsContent value="docs" className="m-0 focus-visible:outline-none">
-              <DocumentationTab />
-            </TabsContent>
+
           </div>
         </Tabs>
       </main>
